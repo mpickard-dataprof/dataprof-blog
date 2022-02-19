@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+/public/
+/resources/
+.hugo_build.lock
+.Rdata
+.httr-oauth
+.DS_Store
