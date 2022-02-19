@@ -1,0 +1,42 @@
+---
+title: test post
+author: Matt Pickard
+date: '2022-02-19'
+slug: test-post
+categories: []
+tags: []
+---
+
+Here's an R code chunk:
+
+```r
+library(reticulate)
+plot(AirPassengers)
+```
+
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-1-1.png" width="672" />
+
+```r
+typeof(AirPassengers)
+```
+
+```
+## [1] "double"
+```
+
+```python
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split, cross_val_score
+
+iris = load_iris()
+X_train, X_test, y_train, y_test = train_test_split(iris.data, iris.target, test_size=0.2)
+
+# create knn model
+model = KNeighborsClassifier()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+cross_val_score(model, X_test, y_test, cv=5, scoring='accuracy')
+```
+
