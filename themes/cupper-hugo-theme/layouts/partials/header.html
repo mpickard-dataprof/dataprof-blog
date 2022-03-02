@@ -6,14 +6,11 @@
         href="{{ .Site.BaseURL }}"
         aria-label="{{ .Site.Title }} home page"
       >
-        {{ with .Site.Params.navTitleText }}
-          <h1>{{ . }}</h1>
-        {{ else }}
           <img 
-            src="{{ "images/logo.svg" | relURL }}" 
+            src="{{ "images/logo.png" | relURL }}" 
             alt="{{ .Site.Params.logoAlt | default "Logo" }}"
           >
-        {{ end }}
+          <h1>{{ .Site.Params.navTitleText }}</h1>
       </a>
       <p class="library-desc">
         {{ with .Site.Params.description }} {{ . | markdownify }} {{ end }}
