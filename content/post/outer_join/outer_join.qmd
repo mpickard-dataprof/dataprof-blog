@@ -1,0 +1,111 @@
+---
+title: "Outer Join"
+format: html
+---
+
+```{r include=FALSE}
+library(tidyverse)
+
+# create example data frames
+employees <- tibble(
+  muppet_id = c(1, 2, 3, 4, 5),
+  names = c(
+    "Kermit the Frog",
+    "Miss Piggy",
+    "Fozzie the Bear",
+    "Gonzo",
+    "Rowlf the Dog"
+  ),
+)
+
+positions <- tibble(
+  muppet_id = c(1, 2, 3, 4, 8),
+  role = c(
+    "pragmatic leader",
+    "diva pig",
+    "stand-up comic",
+    "stunt performer",
+    "frenzied monster drummer"
+  ),
+  wage_per_hour = c(75.00, 85.00, 25.25, 54.50, 45.75)
+)
+```
+
+
+## What is a outer join?
+A outer join keeps all the rows from both the right and left tables and inserts NULLs when a matching row is not found in the other table.
+
+This Venn diagram illustrates which rows are included in a outer join.
+
+![](outer_join_venn.svg){height=250 fig-align="center"}
+
+## How does a outer join work?
+A outer join visits every row in the left table and then checks if there is a matching row in the right table. If there is, it combines the matching left and right row.  If there is not a match, it inserts NULLs in the right columns.  If there are additional primary key values in the right table that were not already inserted from the left table, it inserts those with nulls in the left table columns (since those ids were not found in the left table...only the right table). 
+
+In short, a full outer join is the unique set of rows found in both a left and right join (that's called the intersection -- not to be confused with the intersection of a left and right *table*.  That's an inner join!).
+
+::: {layout="[[32,68], [100]]"}
+![Left Table](outer_join_left_table.svg)
+
+![Right Table](outer_join_right_table.svg)
+
+![Outer Joined Result](outer_join_results.svg)
+:::
+
+Notice how the last row in the left table (`id=5`, `name="Rowlf the Dog`) and the last row in the right table (`id=-8`, `role="frenzied monster drummer"`, `wage_per_hour=45.75`) both appear in the final result with NULLs column values that came from the opposite table.
+
+[The Data School](https://dataschool.com/how-to-teach-people-sql/full-outer-join-animated/) provides a nice explanation of the row by row operations for an outer join -- demonstrating that an outer join is a [left join](https://dataschool.com/assets/images/how-to-teach-people-sql/fullOuter/fullOuter_1.gif) combined with a [right join](https://dataschool.com/assets/images/how-to-teach-people-sql/fullOuter/fullOuter_2.gif).
+
+
+## How many records end up in the result of an inner join?
+
+$L =$ # of records in the left table
+
+$R =$ # of records in the right table
+
+*Min number of records*
+$L$ (# of records in the left table)
+
+This is the case where all the rows in the left and right tables match.
+
+*Max number of records*
+$L$ + $R$
+
+This is the case where there are no matching rows.
+
+## Implementing a outer join in different tools
+Here is how you perform a outer join in [R](#r), [Python](#python), [Power BI](#power-bi), and [Excel](#excel).
+
+### R 
+```{r}
+library(dplyr)
+
+employees %>% 
+  full_join(positions, by = "muppet_id")
+```
+
+### Python
+```{python echo=FALSE}
+employees = r.employees
+positions = r.positions
+```
+
+```{python}
+import pandas as pd
+
+pd.merge(employees, positions, how='outer')
+```
+
+### Power BI
+In Power BI, we invoke Power Query through the Home >> Transform data menu item.
+{{< video https://youtu.be/y1n5ELCyj7Y >}}
+
+### Excel
+In native Excel, there is not a true outer join.  The best we can do is mimic an outer join in two steps.  First, we combine the primary key values from both the left and right tables and eliminate duplicates with the "Remove Duplicates" feature.  Second, we use those unique primary key values to merge the columns together by using `VLOOKUP()` repeatedly. 
+
+
+{{< video https://youtu.be/s5TEqker-xI >}}
+
+:::{.callout-note}
+You can invoke Power Query in Excel (through the Data >> Get Data menu item) to perform a true outer join.
+:::

@@ -1,0 +1,102 @@
+---
+title: "Inner Join"
+format: html
+---
+
+```{r include=FALSE}
+library(tidyverse)
+
+# create example data frames
+employees <- tibble(
+  muppet_id = c(1, 2, 3, 4, 5),
+  names = c(
+    "Kermit the Frog",
+    "Miss Piggy",
+    "Fozzie the Bear",
+    "Gonzo",
+    "Rowlf the Dog"
+  ),
+)
+
+positions <- tibble(
+  muppet_id = c(1, 2, 3, 4, 8),
+  role = c(
+    "pragmatic leader",
+    "diva pig",
+    "stand-up comic",
+    "stunt performer",
+    "frenzied monster drummer"
+  ),
+  wage_per_hour = c(75.00, 85.00, 25.25, 54.50, 45.75)
+)
+```
+
+## What is an inner join?
+
+An inner join keeps only rows from two tables that have matches. This Venn diagram illustrates which rows are included in an inner join.
+
+![](inner_join_venn.svg){height=250 fig-align="center"}
+
+## How does an inner join work?
+
+An inner join visits every row in the left table and then checks if there is a matching row in the right table. If there is, it combines the fields from the matching left and right row. If there is not a match, it drops the row. Thus only the "intersection" of rows from both tables is kept in the result.
+
+## How many records end up in the result of an inner join?
+
+$L =$ # of records in the left table
+
+$R =$ # of records in the right table
+
+Then the number of rows in the resulting inner join is $min(L,R)$
+
+::: {layout="\[\[32,68\], \[100\]\]"}
+
+![Left Table](inner_join_left_table.svg)
+
+![Right Table](inner_join_right_table.svg)
+
+![Inner Joined Result](inner_join_results.svg)
+
+:::
+
+Notice how the last row in the left table (`id=5`, `name="Rowlf the Dog`) and the last row in the right table (`id=-8`, `role="frenzied monster drummer"`, `wage_per_hour=45.75`) were dropped.
+
+[The Data School](https://dataschool.com/how-to-teach-people-sql/inner-join-animated/) provides [a nice animation](https://dataschool.com/assets/images/how-to-teach-people-sql/innerJoin/innerJoin_3.gif) of the row by row operations for an inner join.
+
+## Implementing an inner join in different tools
+
+Here is how you perform an inner join in [R](#r), [Python](#python), [Power BI](#power-bi), and [Excel](#excel).
+
+### R
+
+```{r}
+library(dplyr)
+
+employees %>% 
+  inner_join(positions, by = "muppet_id")
+```
+
+### Python
+
+```{python echo=FALSE}
+employees = r.employees
+positions = r.positions
+```
+
+```{python}
+import pandas as pd
+
+pd.merge(employees, positions, how='inner')
+```
+
+### Power BI
+
+In Power BI, we invoke Power Query through the Home \>\> Transform data menu item. {{< video https://youtu.be/f2i8VpW-wR0 >}}
+
+### Excel
+
+In native Excel, there is not a true inner join. The best we can do is mimic an inner join in two steps. First, find the set of intersecting values from the primary keys (ids) from both tables. We can use the `MATCH()` function to do this. Second, use that set of intersecting keys to merge in the columns together by using `VLOOKUP()` repeatedly.
+
+{{< video https://youtu.be/SHXhUIzillE >}}
+
+:::{.callout-note} You can invoke Power Query in Excel (through the Data \>\> Get Data menu item) to perform a true inner join. :::

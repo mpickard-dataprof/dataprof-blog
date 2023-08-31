@@ -1,0 +1,104 @@
+---
+title: "Right Join"
+format: html
+---
+
+```{r include=FALSE}
+library(tidyverse)
+
+# create example data frames
+employees <- tibble(
+  muppet_id = c(1, 2, 3, 4, 5),
+  names = c(
+    "Kermit the Frog",
+    "Miss Piggy",
+    "Fozzie the Bear",
+    "Gonzo",
+    "Rowlf the Dog"
+  ),
+)
+
+positions <- tibble(
+  muppet_id = c(1, 2, 3, 4, 8),
+  role = c(
+    "pragmatic leader",
+    "diva pig",
+    "stand-up comic",
+    "stunt performer",
+    "frenzied monster drummer"
+  ),
+  wage_per_hour = c(75.00, 85.00, 25.25, 54.50, 45.75)
+)
+```
+
+
+## What is a right join?
+A right join keeps all the rows from the right table and inserts NULLs on the left when there is not a matching row found in the left table.
+
+This Venn diagram illustrates which rows are included in a right join.
+
+![](right_join_venn.svg){height=250 fig-align="center"}
+
+:::{.callout-note}
+A right join is the mirror of a left join.
+:::
+
+## How does a right join work?
+A right join visits every row in the right table and then checks if there is a matching row in the left table. If there is, it combines the matching left and right row.  If there is not, it places nulls on the left side.
+
+::: {layout="[[32,68], [100]]"}
+![Left Table](right_join_left_table.svg)
+
+![Right Table](right_join_right_table.svg)
+
+![Right Joined Result](right_join_results.svg)
+:::
+
+Notice how the last row (`id=-8`, `role="frenzied monster drummer"`, `wage_per_hour=45.75`) in the right table does not have a match in the left table. So, nulls are inserted into the left columns of the result.
+
+[The Data School](https://dataschool.com/how-to-teach-people-sql/left-right-join-animated/) provides [a nice animation](https://dataschool.com/assets/images/how-to-teach-people-sql/leftJoin/leftJoin_4.gif) of the row by row operations for a right join.
+
+
+## How many records end up in the result of an inner join?
+
+$L =$ # of records in the left table
+
+$R =$ # of records in the right table
+
+The number of records in the final left join is $R$. 
+
+
+## Implementing a right join in different tools
+Here is how you perform a right join in [R](#r), [Python](#python), [Power BI](#power-bi), and [Excel](#excel).
+
+### R 
+```{r}
+library(dplyr)
+
+employees %>% 
+  right_join(positions, by = "muppet_id")
+```
+
+### Python
+```{python echo=FALSE}
+employees = r.employees
+positions = r.positions
+```
+
+```{python}
+import pandas as pd
+
+pd.merge(employees, positions, how='right')
+```
+
+### Power BI
+In Power BI, we invoke Power Query through the Home >> Transform data menu item.
+{{< video https://youtu.be/xO-_RiJn4G8 >}}
+
+### Excel
+In native Excel, there is not a true right join.  As demonstrated in the [left join](../left_join/left_join.html) post, we can use `VLOOKUP()` repeatedly to "join" multiples columns in a "left join" manner. Since a right join mirrors a left join; to perform a left join, we can simply swap the left and right tables then perform a left join with `VLOOKUP()`. It's not ideal, but it illustrates how similar interchangeable left and right joins are.
+{{< video https://youtu.be/EkT-cb13IVc >}}
+
+:::{.callout-note}
+You can invoke Power Query in Excel (through the Data >> Get Data menu item) to perform a true right join.
+:::
